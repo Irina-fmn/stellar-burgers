@@ -21,12 +21,14 @@ import {
 } from '@components';
 import { Preloader } from '@ui';
 import { Routes, Route } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import {
+  getIngredients,
   selectErrors,
   selectIngredients,
   selectLoading
-} from 'src/services/ingredients-slice';
+} from '../../services/slices/ingredients-slice';
+import { useEffect } from 'react';
 
 const App = () => {
   /** TODO: взять переменные из стора */
@@ -36,13 +38,42 @@ const App = () => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, [dispatch]);
+
   const handleClose = () => {};
+
+  console.log('ingredients', ingredients);
+  console.log('loading', isIngredientsLoading);
+  console.log('error', error);
 
   return (
     <div className={styles.app}>
       <AppHeader />
       <Routes>
-        <Route path='/' element={<ConstructorPage />} />
+        <Route
+          path='/'
+          element={
+            isIngredientsLoading ? (
+              <Preloader />
+            ) : error ? (
+              <div
+                className={`${styles.error} text text_type_main-medium pt-4`}
+              >
+                {error}
+              </div>
+            ) : ingredients.length > 0 ? (
+              <ConstructorPage />
+            ) : (
+              <div
+                className={`${styles.title} text text_type_main-medium pt-4`}
+              >
+                Нет игредиентов
+              </div>
+            )
+          }
+        />
         <Route path='/feed' element={<Feed />} />
         <Route
           path='/login'
@@ -93,7 +124,7 @@ const App = () => {
           }
         />
         <Route path='*' element={<NotFound404 />} />
-        //модалки с дополнительной информацией
+        {/* //модалки с дополнительной информацией */}
         <Route
           path='/feed/:number'
           element={
