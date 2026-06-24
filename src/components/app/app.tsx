@@ -9,7 +9,7 @@ import {
   ProfileOrders,
   NotFound404
 } from '@pages';
-import '../../index.css';
+//import '../../index.css';
 import styles from './app.module.css';
 
 import {
@@ -21,12 +21,20 @@ import {
 } from '@components';
 import { Preloader } from '@ui';
 import { Routes, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectErrors,
+  selectIngredients,
+  selectLoading
+} from 'src/services/ingredients-slice';
 
 const App = () => {
   /** TODO: взять переменные из стора */
-  const isIngredientsLoading = false;
-  const ingredients = [];
-  const error = null;
+  const isIngredientsLoading = useSelector(selectLoading);
+  const ingredients = useSelector(selectIngredients);
+  const error = useSelector(selectErrors);
+
+  const dispatch = useDispatch();
 
   const handleClose = () => {};
 
@@ -60,7 +68,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/reset-password'
           element={
@@ -69,7 +76,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/profile'
           element={
@@ -78,7 +84,6 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         <Route
           path='/profile/orders'
           element={
@@ -87,10 +92,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-
         <Route path='*' element={<NotFound404 />} />
-
-        {/* //модалки с дополнительной информацией */}
+        //модалки с дополнительной информацией
         <Route
           path='/feed/:number'
           element={
@@ -99,7 +102,6 @@ const App = () => {
             </Modal>
           }
         />
-
         <Route
           path='/ingredients/:id'
           element={
