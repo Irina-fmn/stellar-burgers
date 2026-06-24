@@ -1,7 +1,8 @@
 import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useSelector } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
+//import { createOrder, selectOrderRequest } from 'src/services/slices/order-slice';
 //import { selectConstructorItems } from '../../services/slices/constructor-slice';
 
 export const BurgerConstructor: FC = () => {
@@ -13,15 +14,19 @@ export const BurgerConstructor: FC = () => {
   //   },
   //   ingredients: []
   // };
-  console.log(`constructorItems: ${constructorItems}`);
-  //const constructorItems = useSelector(selectConstructorItems);
+
+  const dispatch = useDispatch();
 
   const orderRequest = false;
-
   const orderModalData = null;
+  // const orderRequest = useSelector((store) => store.order.orderRequest);
+
+  // const orderModalData = useSelector((store) => store.order.orderModalData);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
+    // const ingredients = constructorItems.ingredients;
+    // dispatch(createOrder(ingredients))
   };
   const closeOrderModal = () => {};
 
@@ -34,8 +39,6 @@ export const BurgerConstructor: FC = () => {
       ),
     [constructorItems]
   );
-
-  return null;
 
   return (
     <BurgerConstructorUI

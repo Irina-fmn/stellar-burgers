@@ -20,7 +20,7 @@ import {
   ProtectedRoute
 } from '@components';
 import { Preloader } from '@ui';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   getIngredients,
@@ -37,12 +37,15 @@ const App = () => {
   const error = useSelector(selectErrors);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getIngredients());
   }, [dispatch]);
 
-  const handleClose = () => {};
+  const handleModalClose = () => {
+    navigate('/', { replace: true });
+  };
 
   console.log('ingredients', ingredients);
   console.log('loading', isIngredientsLoading);
@@ -128,7 +131,7 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal title='' onClose={handleClose}>
+            <Modal title='' onClose={handleModalClose}>
               <OrderInfo />
             </Modal>
           }
@@ -136,7 +139,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title='' onClose={handleClose}>
+            <Modal title='Детали ингредиента' onClose={handleModalClose}>
               <IngredientDetails />
             </Modal>
           }
@@ -145,7 +148,7 @@ const App = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <Modal title='' onClose={handleClose}>
+              <Modal title='' onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             </ProtectedRoute>
