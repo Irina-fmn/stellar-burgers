@@ -20,7 +20,7 @@ import {
   ProtectedRoute
 } from '@components';
 import { Preloader } from '@ui';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   getIngredients,
@@ -30,6 +30,7 @@ import {
 } from '../../services/slices/ingredients-slice';
 import { useEffect } from 'react';
 import { getUser } from '../../services/slices/user-slice';
+import { useHandleModalClose } from '../../services/hooks';
 
 const App = () => {
   /** TODO: взять переменные из стора */
@@ -38,7 +39,6 @@ const App = () => {
   const error = useSelector(selectErrors);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getIngredients());
@@ -48,9 +48,7 @@ const App = () => {
     dispatch(getUser());
   }, [dispatch]);
 
-  const handleModalClose = () => {
-    navigate('/', { replace: true });
-  };
+  const handleModalClose = useHandleModalClose();
 
   // console.log('ingredients', ingredients);
   // console.log('loading', isIngredientsLoading);
@@ -105,14 +103,7 @@ const App = () => {
         />
         <Route path='*' element={<NotFound404 />} />
         {/* //модалки с дополнительной информацией */}
-        <Route
-          path='/feed/:number'
-          element={
-            <Modal title='' onClose={handleModalClose}>
-              <OrderInfo />
-            </Modal>
-          }
-        />
+        <Route path='/feed/:number' element={<OrderInfo />} />
         <Route
           path='/ingredients/:id'
           element={
@@ -125,9 +116,7 @@ const App = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <Modal title='' onClose={handleModalClose}>
-                <OrderInfo />
-              </Modal>
+              <OrderInfo />
             </ProtectedRoute>
           }
         />

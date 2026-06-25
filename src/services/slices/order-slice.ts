@@ -14,6 +14,7 @@ type TOrderState = {
   loading: boolean;
   feed: TOrdersData | null;
   orders: TOrder[];
+  selectedOrder: TOrder | null;
 };
 
 const initialState: TOrderState = {
@@ -22,7 +23,8 @@ const initialState: TOrderState = {
   error: null,
   loading: false,
   feed: null,
-  orders: []
+  orders: [],
+  selectedOrder: null
 };
 
 export const getFeeds = createAsyncThunk(
@@ -91,6 +93,19 @@ export const orderSlice = createSlice({
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
         state.orderRequest = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getOrderByNumber.pending, (state) => {
+        state.loading = true;
+      })
+
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedOrder = action.payload.orders[0];
+      })
+
+      .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.error.message || null;
       });
   },
