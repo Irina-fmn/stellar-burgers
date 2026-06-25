@@ -6,18 +6,20 @@ import { useDispatch, useSelector } from '../../services/store';
 import { getFeeds } from '../../services/slices/order-slice';
 
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  // const orders: TOrder[] = [];
   const orders = useSelector((state) => state.order.feed?.orders || []);
+  const loading = useSelector((state) => state.order.loading);
 
   const dispatch = useDispatch();
+  console.log('orders', orders);
+  console.log('loading', loading);
+
   useEffect(() => {
     dispatch(getFeeds());
   }, [dispatch]);
 
-  if (!orders.length) {
+  if (loading) {
     return <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  return <FeedUI orders={orders} handleGetFeeds={() => dispatch(getFeeds())} />;
 };

@@ -6,15 +6,17 @@ import { useSelector } from '../../services/store';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  // const orderData = {
+  //   createdAt: '',
+  //   ingredients: [],
+  //   _id: '',
+  //   status: '',
+  //   name: '',
+  //   updatedAt: 'string',
+  //   number: 0
+  // };
+
+  const orderData = useSelector((state) => state.order.orderModalData);
 
   // const ingredients: TIngredient[] = [];
   const ingredients = useSelector(
