@@ -9,6 +9,7 @@ import {
   TRegisterData,
   TLoginData
 } from '@api';
+import { setCookie } from '../../utils/cookie';
 
 type TUserState = {
   user: TUser | null;
@@ -22,10 +23,13 @@ const initialState: TUserState = {
   error: null
 };
 
-export const createUser = createAsyncThunk(
-  'user/createUser',
+export const registerUser = createAsyncThunk(
+  'user/registerUser',
   async (data: TRegisterData) => {
     const response = await registerUserApi(data);
+    setCookie('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    console.log(`response.user: ${response.user}`);
     return response.user;
   }
 );
@@ -34,6 +38,8 @@ export const loginUser = createAsyncThunk(
   'user/loginUser',
   async (data: TLoginData) => {
     const response = await loginUserApi(data);
+    setCookie('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
     return response.user;
   }
 );
@@ -62,16 +68,17 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createUser.pending, (state) => {
+      .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
-      .addCase(createUser.rejected, (state, action) => {
+      .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
+        console.log(action.error);
         state.error = action.error.message!; //???
       })
       .addCase(loginUser.pending, (state) => {
