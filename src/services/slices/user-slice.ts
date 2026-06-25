@@ -1,5 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
+import {
+  registerUserApi,
+  getUserApi,
+  loginUserApi,
+  logoutApi,
+  updateUserApi,
+  TRegisterData,
+  TLoginData
+} from '@api';
 
 type TUserState = {
   user: TUser | null;
@@ -13,27 +22,115 @@ const initialState: TUserState = {
   error: null
 };
 
+export const createUser = createAsyncThunk(
+  'user/createUser',
+  async (data: TRegisterData) => {
+    const response = await registerUserApi(data);
+    return response.user;
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  'user/loginUser',
+  async (data: TLoginData) => {
+    const response = await loginUserApi(data);
+    return response.user;
+  }
+);
+
+export const getUser = createAsyncThunk('user/getUser', async () => {
+  const response = await getUserApi();
+  return response.user;
+});
+
+export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
+  const response = await logoutApi();
+  return null;
+});
+
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (user: Partial<TRegisterData>) => {
+    const response = await updateUserApi(user);
+    return response.user;
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    setUser: (state, action: PayloadAction<TUser>) => {
-      state.user = action.payload;
-    },
-    clearUser: (state) => {
-      state.user = null;
-    }
-  },
-  selectors: {
-    selectUser: (state) => state.user,
-    selectUserLoading: (state) => state.loading,
-    selectUserErrors: (state) => state.error
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(createUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message!; //???
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message!; //???
+      })
+      .addCase(getUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message!; //???
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message!; //???
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message!; //???
+      });
   }
+  // selectors: {
+  //   selectUser: (state) => state.user,
+  //   selectUserLoading: (state) => state.loading,
+  //   selectUserErrors: (state) => state.error
+  // }
 });
 
-export const { setUser, clearUser } = userSlice.actions;
-
-export const { selectUser, selectUserLoading, selectUserErrors } =
-  userSlice.selectors;
+// export const { selectUser, selectUserLoading, selectUserErrors } =
+//   userSlice.selectors;
 
 export const userReducer = userSlice.reducer;

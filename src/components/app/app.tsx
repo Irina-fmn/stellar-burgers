@@ -29,6 +29,7 @@ import {
   selectLoading
 } from '../../services/slices/ingredients-slice';
 import { useEffect } from 'react';
+import { getUser } from '../../services/slices/user-slice';
 
 const App = () => {
   /** TODO: взять переменные из стора */
@@ -43,13 +44,17 @@ const App = () => {
     dispatch(getIngredients());
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
   const handleModalClose = () => {
     navigate('/', { replace: true });
   };
 
-  console.log('ingredients', ingredients);
-  console.log('loading', isIngredientsLoading);
-  console.log('error', error);
+  // console.log('ingredients', ingredients);
+  // console.log('loading', isIngredientsLoading);
+  // console.log('error', error);
 
   return (
     <div className={styles.app}>
