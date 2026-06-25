@@ -25,12 +25,13 @@ export const BurgerConstructor: FC = () => {
   const user = useSelector((store) => store.user.user);
 
   const onOrderClick = () => {
-    //if (!constructorItems.bun || orderRequest) return;
     if (!user) {
       navigate('/login');
       return;
     }
-
+    if (!constructorItems.bun || orderRequest) return;
+    console.log('click');
+    console.log(constructorItems);
     const ingredients = [
       constructorItems.bun!._id,
       ...constructorItems.ingredients.map((item) => item._id),
