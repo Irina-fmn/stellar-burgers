@@ -85,10 +85,12 @@ export const orderSlice = createSlice({
       })
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
+        state.orderRequest = true;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
-        //state.orderModalData = action.payload;
+        state.orderRequest = false;
+        state.orderModalData = { ...action.payload, ingredients: [] };
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;
@@ -124,4 +126,5 @@ export const orderSlice = createSlice({
 
 export const { selectOrderRequest, orderModalData, selectError } =
   orderSlice.selectors;
+export const { clearOrderModal } = orderSlice.actions;
 export const orderReducer = orderSlice.reducer;

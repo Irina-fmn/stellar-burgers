@@ -10,8 +10,6 @@ export const Feed: FC = () => {
   const loading = useSelector((state) => state.order.loading);
 
   const dispatch = useDispatch();
-  console.log('orders', orders);
-  console.log('loading', loading);
 
   useEffect(() => {
     dispatch(getFeeds());

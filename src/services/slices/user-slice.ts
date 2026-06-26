@@ -19,7 +19,7 @@ type TUserState = {
 
 const initialState: TUserState = {
   user: null,
-  loading: false,
+  loading: true,
   error: null
 };
 
@@ -29,7 +29,6 @@ export const registerUser = createAsyncThunk(
     const response = await registerUserApi(data);
     setCookie('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
-    console.log(`response.user: ${response.user}`);
     return response.user;
   }
 );
@@ -50,7 +49,7 @@ export const getUser = createAsyncThunk('user/getUser', async () => {
 });
 
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
-  const response = await logoutApi();
+  await logoutApi();
   localStorage.removeItem('refreshToken');
   setCookie('accessToken', '');
   return null;
@@ -80,7 +79,6 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        console.log(action.error);
         state.error = action.error.message!; //???
       })
       .addCase(loginUser.pending, (state) => {
@@ -132,11 +130,6 @@ const userSlice = createSlice({
         state.error = action.error.message!; //???
       });
   }
-  // selectors: {
-  //   selectUser: (state) => state.user,
-  //   selectUserLoading: (state) => state.loading,
-  //   selectUserErrors: (state) => state.error
-  // }
 });
 
 // export const { selectUser, selectUserLoading, selectUserErrors } =

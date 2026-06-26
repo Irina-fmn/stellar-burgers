@@ -16,7 +16,6 @@ const initialState: TIngredientsState = {
 
 export const getIngredients = createAsyncThunk('ingredients/get', async () => {
   const data = await getIngredientsApi();
-  console.log('API DATA', data);
   return data;
 });
 
@@ -32,17 +31,14 @@ const ingredientsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getIngredients.pending, (state) => {
-        console.log('PENDING');
         state.loading = true;
         state.error = null;
       })
       .addCase(getIngredients.fulfilled, (state, action) => {
-        console.log('FULFILLED', action.payload);
         state.loading = false;
         state.items = action.payload;
       })
       .addCase(getIngredients.rejected, (state, action) => {
-        console.log('REJECTED', action.error);
         state.loading = false;
         state.error = action.error.message || null;
       });

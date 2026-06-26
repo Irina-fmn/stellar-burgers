@@ -4,11 +4,20 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 type TProtectedRouteProps = {
   children: ReactElement;
+  requireAuth?: boolean;
 };
 
-export const ProtectedRoute = ({ children }: TProtectedRouteProps) => {
+export const ProtectedRoute = ({
+  requireAuth = false,
+  children
+}: TProtectedRouteProps) => {
   const user = useSelector((state) => state.user.user);
-  const location = useLocation();
 
-  return user ? children : <Navigate to='/login' replace />;
+  if (!requireAuth && user) {
+    return <Navigate to='/' replace />;
+  }
+  if (requireAuth && !user) {
+    return <Navigate to='/login' replace />;
+  }
+  return children;
 };

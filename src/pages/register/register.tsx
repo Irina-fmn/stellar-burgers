@@ -24,7 +24,7 @@ export const Register: FC = () => {
 
       navigate('/');
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   return (

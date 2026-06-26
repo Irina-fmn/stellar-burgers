@@ -43,9 +43,6 @@ export const constructorSlice = createSlice({
       state.ingredients.splice(toIndex, 0, ingredientToMove);
     }
   }
-  // selectors: {
-  //   selectConstructorItems: (state) => state
-  // }
 });
 
 export const {
@@ -55,7 +52,5 @@ export const {
   clearConstructor,
   moveIngredient
 } = constructorSlice.actions;
-
-// export const { selectConstructorItems } = constructorSlice.selectors;
 
 export const constructorReducer = constructorSlice.reducer;
