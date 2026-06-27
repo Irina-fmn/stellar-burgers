@@ -20,7 +20,13 @@ import {
   ProtectedRoute
 } from '@components';
 import { Preloader } from '@ui';
-import { Routes, Route, useLocation, useParams } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  useLocation,
+  useParams,
+  Location
+} from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   getIngredients,
@@ -33,19 +39,13 @@ import { getUser } from '../../services/slices/user-slice';
 import { useHandleModalClose } from '../../services/hooks';
 
 const App = () => {
-  /** TODO: взять переменные из стора */
   const isIngredientsLoading = useSelector(selectLoading);
   const ingredients = useSelector(selectIngredients);
   const error = useSelector(selectErrors);
   const isUserLoading = useSelector((state) => state.user.loading);
 
-  const { number } = useParams<{ number?: string }>();
-
-  const location = useLocation();
-  const locationState = location.state as {
-    background?: Location;
-  };
-  const background = locationState && locationState.background;
+  const location = useLocation() as Location<null | { background?: Location }>;
+  const background = location.state?.background;
 
   const dispatch = useDispatch();
 
@@ -138,15 +138,32 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path='/feed/:number' element={<OrderInfo />} />
-            <Route path='/ingredients/:id' element={<IngredientDetails />} />
+            <Route
+              path='/feed/:number'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <OrderInfo />
+                </div>
+              }
+            />
+            <Route
+              path='/ingredients/:id'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <h3
+                    className={`${styles.detailHeader} text text_type_main-large`}
+                  >
+                    Детали ингредиента
+                  </h3>
+                  <IngredientDetails />
+                </div>
+              }
+            />
             <Route
               path='/profile/orders/:number'
               element={
                 <ProtectedRoute requireAuth>
-                  <Modal title={`#${number}`} onClose={handleModalClose}>
-                    <OrderInfo />
-                  </Modal>
+                  <OrderInfo needModal />
                 </ProtectedRoute>
               }
             />
@@ -159,9 +176,7 @@ const App = () => {
                 path='/feed/:number'
                 element={
                   <ProtectedRoute requireAuth>
-                    <Modal title={`#${number}`} onClose={handleModalClose}>
-                      <OrderInfo />
-                    </Modal>
+                    <OrderInfo needModal />
                   </ProtectedRoute>
                 }
               />

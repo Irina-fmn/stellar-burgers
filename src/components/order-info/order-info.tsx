@@ -3,30 +3,27 @@ import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
-import { useParams } from 'react-router-dom';
 import { getOrderByNumber } from '../../services/slices/order-slice';
+import { Modal } from '../modal';
+import { useHandleModalClose } from '../../services/hooks';
+import { useParams } from 'react-router-dom';
 
-export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  // const orderData = {
-  //   createdAt: '',
-  //   ingredients: [],
-  //   _id: '',
-  //   status: '',
-  //   name: '',
-  //   updatedAt: 'string',
-  //   number: 0
-  // };
+interface Props {
+  needModal?: boolean;
+}
 
-  //const { number } = useParams<{ number?: string }>();
+export const OrderInfo: FC<Props> = ({ needModal }) => {
+  const { number } = useParams<{ number?: string }>();
   const dispatch = useDispatch();
   const orderData = useSelector((state) => state.order.selectedOrder);
-  const number = orderData?.number;
+  const loading = useSelector((state) => state.order.loading);
+
+  const handleModalClose = useHandleModalClose();
+
   useEffect(() => {
     dispatch(getOrderByNumber(Number(number)));
   }, [dispatch, number]);
 
-  // const ingredients: TIngredient[] = [];
   const ingredients = useSelector((state) => state.ingredients.items);
 
   /* Готовим данные для отображения */
@@ -71,5 +68,18 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  return orderInfo ? <OrderInfoUI orderInfo={orderInfo} /> : <Preloader />;
+  const content =
+    !loading && orderInfo ? (
+      <OrderInfoUI orderInfo={orderInfo} />
+    ) : (
+      <Preloader />
+    );
+
+  return needModal ? (
+    <Modal title={`#${number}`} onClose={handleModalClose}>
+      {content}
+    </Modal>
+  ) : (
+    content
+  );
 };
