@@ -18,9 +18,10 @@ export const OrderInfo: FC = () => {
   //   number: 0
   // };
 
-  const { number } = useParams<{ number?: string }>();
+  //const { number } = useParams<{ number?: string }>();
   const dispatch = useDispatch();
   const orderData = useSelector((state) => state.order.selectedOrder);
+  const number = orderData?.number;
   useEffect(() => {
     dispatch(getOrderByNumber(Number(number)));
   }, [dispatch, number]);

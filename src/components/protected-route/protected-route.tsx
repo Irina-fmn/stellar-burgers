@@ -12,12 +12,14 @@ export const ProtectedRoute = ({
   children
 }: TProtectedRouteProps) => {
   const user = useSelector((state) => state.user.user);
+  const location = useLocation();
 
   if (!requireAuth && user) {
-    return <Navigate to='/' replace />;
+    const from = location.state?.from || '/';
+    return <Navigate to={from} replace />;
   }
   if (requireAuth && !user) {
-    return <Navigate to='/login' replace />;
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
   return children;
 };
