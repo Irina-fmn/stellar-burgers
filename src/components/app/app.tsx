@@ -20,7 +20,7 @@ import {
   ProtectedRoute
 } from '@components';
 import { Preloader } from '@ui';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   getIngredients,
@@ -38,6 +38,8 @@ const App = () => {
   const ingredients = useSelector(selectIngredients);
   const error = useSelector(selectErrors);
   const isUserLoading = useSelector((state) => state.user.loading);
+
+  const { number } = useParams<{ number?: string }>();
 
   const location = useLocation();
   const locationState = location.state as {
@@ -136,6 +138,18 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
+            <Route path='/feed/:number' element={<OrderInfo />} />
+            <Route path='/ingredients/:id' element={<IngredientDetails />} />
+            <Route
+              path='/profile/orders/:number'
+              element={
+                <ProtectedRoute requireAuth>
+                  <Modal title={`#${number}`} onClose={handleModalClose}>
+                    <OrderInfo />
+                  </Modal>
+                </ProtectedRoute>
+              }
+            />
             <Route path='*' element={<NotFound404 />} />
           </Routes>
           {/* //модалки с дополнительной информацией */}
@@ -145,7 +159,9 @@ const App = () => {
                 path='/feed/:number'
                 element={
                   <ProtectedRoute requireAuth>
-                    <OrderInfo />
+                    <Modal title={`#${number}`} onClose={handleModalClose}>
+                      <OrderInfo />
+                    </Modal>
                   </ProtectedRoute>
                 }
               />
@@ -160,7 +176,7 @@ const App = () => {
               <Route
                 path='/profile/orders/:number'
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requireAuth>
                     <OrderInfo />
                   </ProtectedRoute>
                 }

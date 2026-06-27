@@ -5,8 +5,6 @@ import { TIngredient } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
 import { useParams } from 'react-router-dom';
 import { getOrderByNumber } from '../../services/slices/order-slice';
-import { Modal } from '../modal';
-import { useHandleModalClose } from '../../services/hooks';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
@@ -20,7 +18,6 @@ export const OrderInfo: FC = () => {
   //   number: 0
   // };
 
-  const handleModalClose = useHandleModalClose();
   const { number } = useParams<{ number?: string }>();
   const dispatch = useDispatch();
   const orderData = useSelector((state) => state.order.selectedOrder);
@@ -73,9 +70,5 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  return (
-    <Modal title={`#${number}`} onClose={handleModalClose}>
-      {orderInfo ? <OrderInfoUI orderInfo={orderInfo} /> : <Preloader />}
-    </Modal>
-  );
+  return orderInfo ? <OrderInfoUI orderInfo={orderInfo} /> : <Preloader />;
 };
