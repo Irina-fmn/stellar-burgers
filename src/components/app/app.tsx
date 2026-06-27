@@ -20,7 +20,7 @@ import {
   ProtectedRoute
 } from '@components';
 import { Preloader } from '@ui';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import {
   getIngredients,
@@ -38,6 +38,12 @@ const App = () => {
   const ingredients = useSelector(selectIngredients);
   const error = useSelector(selectErrors);
   const isUserLoading = useSelector((state) => state.user.loading);
+
+  const location = useLocation();
+  const locationState = location.state as {
+    background?: Location;
+  };
+  const background = locationState && locationState.background;
 
   const dispatch = useDispatch();
 
@@ -58,7 +64,7 @@ const App = () => {
       ) : (
         <>
           <AppHeader />
-          <Routes>
+          <Routes location={background || location}>
             <Route
               path='/'
               element={
@@ -131,32 +137,36 @@ const App = () => {
               }
             />
             <Route path='*' element={<NotFound404 />} />
-            {/* //модалки с дополнительной информацией */}
-            <Route
-              path='/feed/:number'
-              element={
-                <ProtectedRoute requireAuth>
-                  <OrderInfo />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path='/ingredients/:id'
-              element={
-                <Modal title='Детали ингредиента' onClose={handleModalClose}>
-                  <IngredientDetails />
-                </Modal>
-              }
-            />
-            <Route
-              path='/profile/orders/:number'
-              element={
-                <ProtectedRoute>
-                  <OrderInfo />
-                </ProtectedRoute>
-              }
-            />
           </Routes>
+          {/* //модалки с дополнительной информацией */}
+          {background && (
+            <Routes>
+              <Route
+                path='/feed/:number'
+                element={
+                  <ProtectedRoute requireAuth>
+                    <OrderInfo />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path='/ingredients/:id'
+                element={
+                  <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                    <IngredientDetails />
+                  </Modal>
+                }
+              />
+              <Route
+                path='/profile/orders/:number'
+                element={
+                  <ProtectedRoute>
+                    <OrderInfo />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          )}
         </>
       )}
     </div>
