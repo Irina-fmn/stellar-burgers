@@ -163,7 +163,9 @@ const App = () => {
               path='/profile/orders/:number'
               element={
                 <ProtectedRoute requireAuth>
-                  <OrderInfo needModal />
+                  <div className={styles.detailPageWrap}>
+                    <OrderInfo />
+                  </div>
                 </ProtectedRoute>
               }
             />
@@ -192,7 +194,7 @@ const App = () => {
                 path='/profile/orders/:number'
                 element={
                   <ProtectedRoute requireAuth>
-                    <OrderInfo />
+                    <OrderInfo needModal />
                   </ProtectedRoute>
                 }
               />

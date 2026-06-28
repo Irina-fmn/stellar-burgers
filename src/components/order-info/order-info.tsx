@@ -80,6 +80,9 @@ export const OrderInfo: FC<Props> = ({ needModal }) => {
       {content}
     </Modal>
   ) : (
-    content
+    <>
+      <h3 className={`text text_type_main-large`}>#{number}</h3>
+      {content}
+    </>
   );
 };
