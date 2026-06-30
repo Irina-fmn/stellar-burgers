@@ -174,14 +174,7 @@ const App = () => {
           {/* //модалки с дополнительной информацией */}
           {background && (
             <Routes>
-              <Route
-                path='/feed/:number'
-                element={
-                  <ProtectedRoute requireAuth>
-                    <OrderInfo needModal />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path='/feed/:number' element={<OrderInfo needModal />} />
               <Route
                 path='/ingredients/:id'
                 element={
