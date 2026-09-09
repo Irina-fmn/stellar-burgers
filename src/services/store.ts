@@ -5,8 +5,8 @@ import {
   useDispatch as dispatchHook,
   useSelector as selectorHook
 } from 'react-redux';
-
-const rootReducer = () => {}; // Заменить на импорт настоящего редьюсера
+import { rootReducer } from './root-reducer';
+//const rootReducer = () => {}; // Заменить на импорт настоящего редьюсера
 
 const store = configureStore({
   reducer: rootReducer,

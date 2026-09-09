@@ -20,6 +20,7 @@ export const ProfileUI: FC<ProfileUIProps> = ({
       <ProfileMenu />
     </div>
     <form
+      name='profile'
       className={`mt-30 ${styles.form} ${commonStyles.form}`}
       onSubmit={handleSubmit}
     >
@@ -61,6 +62,7 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            autoComplete='new-password'
           />
         </div>
         {isFormChanged && (
