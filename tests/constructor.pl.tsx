@@ -29,3 +29,29 @@ test('добавление ингредиентов в конструктор', 
     })
   ).toBeVisible();
 });
+
+test('открытие и закрытие модального окна ингредиента', async ({ page }) => {
+  await page.routeFromHAR('./tests/hars/ingredients.har', {
+    url: '**/ingredients'
+  });
+
+  await page.goto('/');
+
+  // Открываем модалку ингредиента
+  await page
+    .getByRole('link', {
+      name: 'Краторная булка N-200i'
+    })
+    .click();
+
+  await expect(
+    page.locator('#modals').getByText('Детали ингредиента')
+  ).toBeVisible();
+
+  // Закрываем модалку крестиком
+  await page.locator('#modals button').click();
+
+  // Проверяем, что модалка закрылась
+  await expect(page.locator('#modals')).not.toBeVisible();
+});
+
