@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('добавление ингредиента из списка в конструктор.', () => {
-
-});
+test.describe('добавление ингредиента из списка в конструктор.', () => {});
 
 test('добавление ингредиентов в конструктор', async ({ page }) => {
   await page.routeFromHAR('./tests/hars/ingredients.har', {
@@ -34,60 +32,61 @@ test('добавление ингредиентов в конструктор', 
   ).toBeVisible();
 });
 
-test('открытие и закрытие модального окна ингредиента', async ({ page }) => {
-  await page.routeFromHAR('./tests/hars/ingredients.har', {
-    url: '**/ingredients'
+test.describe('Модальное окно ингредиента', () => {
+  test('открытие модального окна ингредиента', async ({ page }) => {
+    await page.routeFromHAR('./tests/hars/ingredients.har', {
+      url: '**/ingredients'
+    });
+    await page.goto('/');
+
+    await page.getByRole('link', { name: 'Краторная булка N-200i' }).click();
+
+    await expect(
+      page.locator('#modals').getByText('Детали ингредиента')
+    ).toBeVisible();
+
+    await expect(
+      page.locator('#modals').getByText('Краторная булка N-200i')
+    ).toBeVisible();
   });
 
-  await page.goto('/');
-
-  // Открываем модалку ингредиента
-  await page
-    .getByRole('link', {
-      name: 'Краторная булка N-200i'
-    })
-    .click();
-
-  await expect(
-    page.locator('#modals').getByText('Детали ингредиента')
-  ).toBeVisible();
-
-  // Закрываем модалку крестиком
-  await page.locator('#modals button').click();
-
-  // Проверяем, что модалка закрылась
-  await expect(page.locator('#modals')).not.toBeVisible();
-});
-
-test('закрытие модального окна по клику на оверлей', async ({ page }) => {
-  await page.routeFromHAR('./tests/hars/ingredients.har', {
-    url: '**/ingredients'
-  });
-
-  await page.goto('/');
-
-  // Открываем модалку ингредиента
-  await page
-    .getByRole('link', {
-      name: 'Краторная булка N-200i'
-    })
-    .click();
-
-  // Проверяем, что модалка открылась
-  await expect(
-    page.locator('#modals').getByText('Детали ингредиента')
-  ).toBeVisible();
-
-  // Закрываем модалку кликом по оверлею
-  await page
-    .locator('#modals > div')
-    .last()
-    .click({
-      position: { x: 10, y: 10 }
+  test('закрытие модального окна по кнопке', async ({ page }) => {
+    await page.routeFromHAR('./tests/hars/ingredients.har', {
+      url: '**/ingredients'
     });
 
-  // Проверяем, что модалка закрылась
-  await expect(page.locator('#modals')).not.toBeVisible();
+    await page.goto('/');
+
+    await page.getByRole('link', { name: 'Краторная булка N-200i' }).click();
+
+    await expect(
+      page.locator('#modals').getByText('Детали ингредиента')
+    ).toBeVisible();
+
+    await page.locator('#modals button').click();
+
+    await expect(page.locator('#modals')).not.toBeVisible();
+  });
+
+  test('закрытие модального окна по клику на оверлей', async ({ page }) => {
+    await page.routeFromHAR('./tests/hars/ingredients.har', {
+      url: '**/ingredients'
+    });
+    await page.goto('/');
+
+    await page.getByRole('link', { name: 'Краторная булка N-200i' }).click();
+
+    await expect(
+      page.locator('#modals').getByText('Детали ингредиента')
+    ).toBeVisible();
+
+    await page
+      .locator('#modals > div')
+      .last()
+      .click({ position: { x: 10, y: 10 } });
+
+    await expect(page.locator('#modals')).not.toBeVisible();
+  });
 });
 
 test('создание заказа', async ({ context, page }) => {
@@ -95,6 +94,7 @@ test('создание заказа', async ({ context, page }) => {
     url: '**/ingredients'
   });
 
+  // Мокируем получение данных авторизованного пользователя
   await page.route('**/auth/user', async (route) => {
     await route.fulfill({
       status: 200,
@@ -109,6 +109,7 @@ test('создание заказа', async ({ context, page }) => {
     });
   });
 
+  // Мокируем создание заказа
   await page.route('**/orders', async (route) => {
     await route.fulfill({
       status: 200,
@@ -185,6 +186,7 @@ test('создание заказа', async ({ context, page }) => {
     });
   });
 
+  // Добавляем авторизацию
   await context.addCookies([
     {
       name: 'accessToken',
@@ -197,12 +199,10 @@ test('создание заказа', async ({ context, page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('refreshToken', 'test-refresh-token');
   });
+
   await page.goto('/');
 
-  // await expect(
-  //   page.getByRole('button', { name: 'Оформить заказ' })
-  // ).toBeVisible();
-
+  // Добавляем булку и начинку
   const bun = page.locator('li').filter({ hasText: 'Краторная булка N-200i' });
   await bun.getByRole('button', { name: 'Добавить' }).click();
 
@@ -211,10 +211,13 @@ test('создание заказа', async ({ context, page }) => {
     .filter({ hasText: 'Говяжий метеорит (отбивная)' });
 
   await filling.getByRole('button', { name: 'Добавить' }).click();
+
+  // Создаём заказ
   await page.getByRole('button', { name: 'Оформить заказ' }).click();
 
   await expect(page.getByText('110100')).toBeVisible();
 
+  // Проверяем, что конструктор очистился
   await expect(
     page.getByText('Краторная булка N-200i (верх)')
   ).not.toBeVisible();
@@ -225,6 +228,7 @@ test('создание заказа', async ({ context, page }) => {
       .filter({ hasText: 'Говяжий метеорит (отбивная)' })
   ).not.toBeVisible();
 
+  // Закрываем модальное окно заказа
   await page.locator('#modals button').click();
 
   await expect(page.locator('#modals')).not.toBeVisible();
