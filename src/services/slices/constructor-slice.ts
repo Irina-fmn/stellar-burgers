@@ -9,7 +9,7 @@ type TConstructorState = {
 
 type TMoveIngredient = { fromIndex: number; toIndex: number };
 
-const initialState: TConstructorState = {
+export const initialState: TConstructorState = {
   bun: null,
   ingredients: []
 };
