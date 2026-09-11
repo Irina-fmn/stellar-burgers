@@ -4,7 +4,8 @@ import {
   initialState,
   setBun,
   addIngredient,
-  removeIngredient
+  removeIngredient,
+  clearConstructor
 } from './constructor-slice';
 
 const bun = {
@@ -71,5 +72,11 @@ describe('проверяем работу редьюсера burgerConstructor',
     expect(state.ingredients).toEqual([]);
   });
 
-  test('', () => {});
+  test('очищает конструктор', () => {
+    const state = constructorReducer(
+      { bun, ingredients: [constructorIngredient] },
+      clearConstructor()
+    );
+    expect(state).toEqual(initialState);
+  });
 });
