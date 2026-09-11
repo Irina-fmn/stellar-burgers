@@ -5,7 +5,8 @@ import {
   setBun,
   addIngredient,
   removeIngredient,
-  clearConstructor
+  clearConstructor,
+  moveIngredient
 } from './constructor-slice';
 
 const bun = {
@@ -78,5 +79,21 @@ describe('проверяем работу редьюсера burgerConstructor',
       clearConstructor()
     );
     expect(state).toEqual(initialState);
+  });
+
+  test('перемещает ингредиент в конструкторе', () => {
+    const ingredient1 = { ...ingredient, id: 'id-1' };
+    const ingredient2 = { ...ingredient, id: 'id-2' };
+    const ingredient3 = { ...ingredient, id: 'id-3' };
+
+    const state = constructorReducer(
+      {
+        bun: null,
+        ingredients: [ingredient1, ingredient2, ingredient3]
+      },
+      moveIngredient({ fromIndex: 0, toIndex: 2 })
+    );
+
+    expect(state.ingredients).toEqual([ingredient2, ingredient3, ingredient1]);
   });
 });
