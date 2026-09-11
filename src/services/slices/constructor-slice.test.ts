@@ -59,4 +59,17 @@ describe('проверяем работу редьюсера burgerConstructor',
     expect(state.ingredients[0]).toMatchObject(ingredient);
     expect(state.ingredients[0]).toHaveProperty('id');
   });
+
+  test('удаляет ингредиент из конструктора', () => {
+    const state = constructorReducer(
+      {
+        ...initialState,
+        ingredients: [constructorIngredient]
+      },
+      removeIngredient('test-id-1')
+    );
+    expect(state.ingredients).toEqual([]);
+  });
+
+  test('', () => {});
 });
