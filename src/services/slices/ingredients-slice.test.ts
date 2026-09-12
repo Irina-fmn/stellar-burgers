@@ -50,12 +50,31 @@ describe('проверяем работу редьюсера ingredients', () =>
       },
       getIngredients.fulfilled(ingredients, 'request-id')
     );
-    
 
     expect(state).toEqual({
       items: ingredients,
       loading: false,
       error: null
+    });
+  });
+
+  test('проверяет getIngredients.rejected', () => {
+    const state = ingredientsReducer(
+      {
+        items: [],
+        loading: true,
+        error: null
+      },
+      getIngredients.rejected(
+        new Error('Ошибка загрузки ингредиентов'),
+        'request-id'
+      )
+    );
+
+    expect(state).toEqual({
+      items: [],
+      loading: false,
+      error: 'Ошибка загрузки ингредиентов'
     });
   });
 });
